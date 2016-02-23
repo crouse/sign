@@ -28,6 +28,9 @@ public:
     int setModel();
     void setDatabase();
 
+private slots:
+    void on_pushButtonOK_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

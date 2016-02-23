@@ -71,3 +71,25 @@ int MainWindow::setModel()
     ui->tableView->reset();
     return true;
 }
+
+void MainWindow::on_pushButtonOK_clicked()
+{
+    QString name = ui->lineEditName->text().trimmed();
+    QString gender = ui->comboBoxGender->currentText();
+    QString phone = ui->lineEditPhone->text().trimmed();
+    QString birthday = ui->lineEditBirth->text().trimmed();
+    QDate logdate = ui->dateTimeEdit->date();
+    QString date = logdate.toString("yyyy-MM-dd");
+
+    QSqlQuery query;
+    QString insert = QString("insert into sign (name, gender, phone, birthday, logdate) "
+                             " values ('%1', '%2', '%3', '%4', '%5');"
+                             ).arg(name).arg(gender).arg(phone).arg(birthday).arg(date);
+    query.exec(insert);
+    qDebug() << insert;
+    qDebug() << query.lastError().text();
+    database.commit();
+
+    model->select();
+    ui->tableView->reset();
+}

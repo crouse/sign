@@ -212,6 +212,17 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>comboBoxGender</tabstop>
+  <tabstop>lineEditPhone</tabstop>
+  <tabstop>lineEditBirth</tabstop>
+  <tabstop>dateTimeEdit</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>tableViewChoose</tabstop>
+  <tabstop>tableView</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
