@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableViewChoose->hide();
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     setDatabase();
+    candidate();
 }
 
 MainWindow::~MainWindow()
@@ -43,7 +44,8 @@ dbpath = "sign.db";
                                          " gender varchar(4), "
                                          " phone varchar(32), "
                                          " birthday datetime(4), "
-                                         " logdate datetime"
+                                         " logdate datetime,"
+                                         " current datetime"
                                          ");");
         query.exec(createTableSql);
         qDebug() << createTableSql;
@@ -52,7 +54,7 @@ dbpath = "sign.db";
     }
 }
 
-int MainWindow::setModel()
+void MainWindow::setModel()
 {
     model = new QSqlTableModel(this);
     model->setTable("sign");
@@ -62,17 +64,39 @@ int MainWindow::setModel()
     model->setHeaderData(1, Qt::Horizontal, "性别");
     model->setHeaderData(2, Qt::Horizontal, "手机");
     model->setHeaderData(3, Qt::Horizontal, "生日");
-    model->setHeaderData(4, Qt::Horizontal, "录入时间");
+    model->setHeaderData(4, Qt::Horizontal, "日期");
+    model->setHeaderData(5, Qt::Horizontal, "记录时间");
 
     ui->tableView->setModel(model);
     ui->tableView->alternatingRowColors();
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
     model->select();
     ui->tableView->reset();
-    return true;
 }
 
-void MainWindow::on_pushButtonOK_clicked()
+void MainWindow::candidate()
+{
+    QSqlTableModel *candidateModel = new QSqlTableModel(this);
+    candidateModel->setTable("sign");
+    candidateModel->setHeaderData(0, Qt::Horizontal, "姓名");
+    candidateModel->setHeaderData(1, Qt::Horizontal, "性别");
+    candidateModel->setHeaderData(2, Qt::Horizontal, "手机");
+    candidateModel->setHeaderData(3, Qt::Horizontal, "生日");
+    candidateModel->setHeaderData(4, Qt::Horizontal, "日期");
+    candidateModel->setHeaderData(5, Qt::Horizontal, "记录时间");
+    ui->tableViewChoose->setModel(candidateModel);
+    ui->tableViewChoose->alternatingRowColors();
+    ui->tableViewChoose->horizontalHeader()->setStretchLastSection(true);
+    candidateModel->select();
+    int cnt = candidateModel->record().count();
+
+    if (cnt) {
+        ui->tableViewChoose->reset();
+        ui->tableViewChoose->show();
+    }
+}
+
+void MainWindow::insertRec()
 {
     QString name = ui->lineEditName->text().trimmed();
     QString gender = ui->comboBoxGender->currentText();
@@ -80,16 +104,22 @@ void MainWindow::on_pushButtonOK_clicked()
     QString birthday = ui->lineEditBirth->text().trimmed();
     QDate logdate = ui->dateTimeEdit->date();
     QString date = logdate.toString("yyyy-MM-dd");
+    QString currentDt = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
 
     QSqlQuery query;
-    QString insert = QString("insert into sign (name, gender, phone, birthday, logdate) "
-                             " values ('%1', '%2', '%3', '%4', '%5');"
-                             ).arg(name).arg(gender).arg(phone).arg(birthday).arg(date);
+    QString insert = QString("insert into sign (name, gender, phone, birthday, logdate, current) "
+                             " values ('%1', '%2', '%3', '%4', '%5', '%6');"
+                             ).arg(name).arg(gender).arg(phone).arg(birthday).arg(date).arg(currentDt);
     query.exec(insert);
-    qDebug() << insert;
-    qDebug() << query.lastError().text();
     database.commit();
 
+    model->setSort(5,Qt::DescendingOrder);
     model->select();
     ui->tableView->reset();
+}
+
+void MainWindow::on_pushButtonOK_clicked()
+{
+    ui->tableViewChoose->show();
+    insertRec();
 }

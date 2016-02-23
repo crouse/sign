@@ -25,7 +25,9 @@ public:
     ~MainWindow();
     QSqlDatabase database;
     QSqlTableModel *model;
-    int setModel();
+    void setModel();
+    void insertRec();
+    void candidate();
     void setDatabase();
 
 private slots:
