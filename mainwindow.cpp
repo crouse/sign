@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QCoreApplication>
+#include <QDesktopServices>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableViewChoose->hide();
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     setDatabase();
-    candidate_cnt = 0;
 }
 
 MainWindow::~MainWindow()
@@ -21,19 +22,8 @@ MainWindow::~MainWindow()
 void MainWindow::setDatabase()
 {
     database = QSqlDatabase::addDatabase("QSQLITE");
-    QString dbpath;
-#ifdef Q_OS_MAC
-QFileInfo macPath("/Volumes/sign/database/");
-if (macPath.isDir()) {
-    dbpath = QString("%1/sign.db").arg(macPath.path());
-} else {
-    dbpath = "/tmp/sign.db";
-}
-#else
-dbpath = "sign.db";
-#endif
-
-    database.setDatabaseName(dbpath);
+    QString dbpath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    database.setDatabaseName(QString("%1/sign.db").arg(dbpath));
     if (!database.open()) {
         qDebug() << "Can not open sign.db";
         QMessageBox::information(this, "", "无法连接数据库");
@@ -136,14 +126,17 @@ void MainWindow::insertRec(QString tableName)
 void MainWindow::on_pushButtonOK_clicked()
 {
     insertRec("sign");
-    if(candidate_cnt == 0) {
+    model->setSort(5,Qt::DescendingOrder);
+    model->select();
+    QString name = ui->lineEditName->text().trimmed();
+    QString phone = ui->lineEditPhone->text().trimmed();
+
+    int cnt = queryCnt(QString("select * from sign_dict where name = '%1' and phone = '%2'").arg(name).arg(phone));
+    if (cnt == 0) {
         insertRec("sign_dict");
     }
 
-    model->setSort(5,Qt::DescendingOrder);
-    model->select();
     ui->tableView->reset();
-    candidate_cnt = 0;
     ui->lineEditName->clear();
     ui->lineEditPhone->clear();
     ui->lineEditBirth->clear();
@@ -168,24 +161,35 @@ int MainWindow::autoFill(QString name, QString phone)
     return cnt;
 }
 
+int MainWindow::queryCnt(QString sql)
+{
+    QSqlQuery query;
+    query.exec(sql);
+    int cnt = 0;
+    while(query.next())
+        cnt += 1;
+    qDebug() << sql << cnt;
+    return cnt;
+}
+
 void MainWindow::on_lineEditName_editingFinished()
 {
     qDebug() << "name finish";
-    candidate_cnt = autoFill(ui->lineEditName->text().trimmed(), "");
+    autoFill(ui->lineEditName->text().trimmed(), "");
 }
 
 void MainWindow::on_lineEditName_returnPressed()
 {
     qDebug() << "name return";
-    candidate_cnt = autoFill(ui->lineEditName->text().trimmed(), "");
+    autoFill(ui->lineEditName->text().trimmed(), "");
 }
 
 void MainWindow::on_lineEditPhone_editingFinished()
 {
-    candidate_cnt = autoFill("", ui->lineEditPhone->text().trimmed());
+    autoFill("", ui->lineEditPhone->text().trimmed());
 }
 
 void MainWindow::on_lineEditPhone_returnPressed()
 {
-    candidate_cnt = autoFill("", ui->lineEditPhone->text().trimmed());
+    autoFill("", ui->lineEditPhone->text().trimmed());
 }

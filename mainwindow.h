@@ -30,6 +30,7 @@ public:
     int candidate(QString filter);
     void setDatabase();
     int autoFill(QString name, QString phone);
+    int queryCnt(QString sql);
 
 private slots:
     void on_pushButtonOK_clicked();
@@ -44,7 +45,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    int candidate_cnt;
 };
 
 #endif // MAINWINDOW_H
