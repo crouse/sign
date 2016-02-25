@@ -165,6 +165,9 @@
             <property name="text">
              <string>确定</string>
             </property>
+            <property name="shortcut">
+             <string>Meta+Return</string>
+            </property>
             <property name="flat">
              <bool>false</bool>
             </property>

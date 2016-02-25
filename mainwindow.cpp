@@ -95,8 +95,16 @@ int MainWindow::candidate(QString filter)
     qDebug() << "cnt = " << cnt;
     if (cnt <= 0 ) return cnt;
     if (cnt == 1) {
-        qDebug() << candidateModel->record(0).value("phone");
-        qDebug() << candidateModel->record(0).value("gender");
+        QString name = candidateModel->record(0).value("name").toString();
+        QString phone = candidateModel->record(0).value("phone").toString();
+        QString gender = candidateModel->record(0).value("gender").toString();
+        QString birthday = candidateModel->record(0).value("birthday").toString();
+        if (ui->lineEditName->text().isEmpty()) ui->lineEditName->setText(name);
+        if (ui->lineEditPhone->text().isEmpty()) ui->lineEditPhone->setText(phone);
+        ui->lineEditBirth->setText(birthday);
+        ui->comboBoxGender->setCurrentText(gender);
+        qDebug() << name << phone << gender;
+        return cnt;
     }
 
     if (cnt >1) ui->tableViewChoose->show();
@@ -125,11 +133,13 @@ void MainWindow::insertRec(QString tableName)
 
 void MainWindow::on_pushButtonOK_clicked()
 {
+    QString name = ui->lineEditName->text().trimmed();
+    QString phone = ui->lineEditPhone->text().trimmed();
+    if (name.isEmpty()) return;
+
     insertRec("sign");
     model->setSort(5,Qt::DescendingOrder);
     model->select();
-    QString name = ui->lineEditName->text().trimmed();
-    QString phone = ui->lineEditPhone->text().trimmed();
 
     int cnt = queryCnt(QString("select * from sign_dict where name = '%1' and phone = '%2'").arg(name).arg(phone));
     if (cnt == 0) {
@@ -149,15 +159,21 @@ int MainWindow::autoFill(QString name, QString phone)
 
     if (name.isEmpty() && phone.isEmpty()) return 0;
 
-    if (!name.isEmpty()) {
-        cnt = candidate(QString("name = '%1'").arg(name));
-        if (cnt <= 0) return 0;
+    if (!name.isEmpty() and !phone.isEmpty()) {
+        cnt = candidate(QString("name = '%1' and phone = '%2'").arg(name).arg(phone));
+        if (cnt <= 0) return cnt;
     }
 
     if (!phone.isEmpty()) {
         cnt = candidate(QString("phone = '%1'").arg(phone));
-        if (cnt <= 0) return 0;
+        return cnt;
     }
+
+    if (!name.isEmpty()) {
+        cnt = candidate(QString("name = '%1'").arg(name));
+        return cnt;
+    }
+
     return cnt;
 }
 
@@ -174,22 +190,20 @@ int MainWindow::queryCnt(QString sql)
 
 void MainWindow::on_lineEditName_editingFinished()
 {
-    qDebug() << "name finish";
-    autoFill(ui->lineEditName->text().trimmed(), "");
+    autoFill(ui->lineEditName->text().trimmed(), ui->lineEditPhone->text().trimmed());
 }
 
 void MainWindow::on_lineEditName_returnPressed()
 {
-    qDebug() << "name return";
-    autoFill(ui->lineEditName->text().trimmed(), "");
+    autoFill(ui->lineEditName->text().trimmed(), ui->lineEditPhone->text().trimmed());
 }
 
 void MainWindow::on_lineEditPhone_editingFinished()
 {
-    autoFill("", ui->lineEditPhone->text().trimmed());
+    autoFill(ui->lineEditName->text().trimmed(), ui->lineEditPhone->text().trimmed());
 }
 
 void MainWindow::on_lineEditPhone_returnPressed()
 {
-    autoFill("", ui->lineEditPhone->text().trimmed());
+    autoFill(ui->lineEditName->text().trimmed(), ui->lineEditPhone->text().trimmed());
 }
