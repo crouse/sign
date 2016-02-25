@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableViewChoose->hide();
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     setDatabase();
-    candidate();
+    candidate_cnt = 0;
 }
 
 MainWindow::~MainWindow()
@@ -43,12 +43,21 @@ dbpath = "sign.db";
                                          " name varchar(32), "
                                          " gender varchar(4), "
                                          " phone varchar(32), "
-                                         " birthday datetime(4), "
+                                         " birthday datetime, "
                                          " logdate datetime,"
                                          " current datetime"
                                          ");");
+        QString indexTableSql = QString("Create table sign_dict ( "
+                                        " name varchar(32), "
+                                        " gender varchar(32),"
+                                        " phone varchar(32),"
+                                        " birthday datetime,"
+                                        " logdate datetime,"
+                                        " current datetime"
+                                        " );");
         query.exec(createTableSql);
-        qDebug() << createTableSql;
+        query.exec(indexTableSql);
+        qDebug() << createTableSql << indexTableSql;
         database.commit();
         setModel();
     }
@@ -74,10 +83,10 @@ void MainWindow::setModel()
     ui->tableView->reset();
 }
 
-void MainWindow::candidate()
+int MainWindow::candidate(QString filter)
 {
     QSqlTableModel *candidateModel = new QSqlTableModel(this);
-    candidateModel->setTable("sign");
+    candidateModel->setTable("sign_dict");
     candidateModel->setHeaderData(0, Qt::Horizontal, "姓名");
     candidateModel->setHeaderData(1, Qt::Horizontal, "性别");
     candidateModel->setHeaderData(2, Qt::Horizontal, "手机");
@@ -87,16 +96,25 @@ void MainWindow::candidate()
     ui->tableViewChoose->setModel(candidateModel);
     ui->tableViewChoose->alternatingRowColors();
     ui->tableViewChoose->horizontalHeader()->setStretchLastSection(true);
+    qDebug() << filter;
+    candidateModel->setFilter(filter);
     candidateModel->select();
-    int cnt = candidateModel->record().count();
+    int cnt = candidateModel->rowCount();
 
-    if (cnt) {
-        ui->tableViewChoose->reset();
-        ui->tableViewChoose->show();
+
+    qDebug() << "cnt = " << cnt;
+    if (cnt <= 0 ) return cnt;
+    if (cnt == 1) {
+        qDebug() << candidateModel->record(0).value("phone");
+        qDebug() << candidateModel->record(0).value("gender");
     }
+
+    if (cnt >1) ui->tableViewChoose->show();
+
+    return cnt;
 }
 
-void MainWindow::insertRec()
+void MainWindow::insertRec(QString tableName)
 {
     QString name = ui->lineEditName->text().trimmed();
     QString gender = ui->comboBoxGender->currentText();
@@ -107,19 +125,67 @@ void MainWindow::insertRec()
     QString currentDt = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
 
     QSqlQuery query;
-    QString insert = QString("insert into sign (name, gender, phone, birthday, logdate, current) "
-                             " values ('%1', '%2', '%3', '%4', '%5', '%6');"
-                             ).arg(name).arg(gender).arg(phone).arg(birthday).arg(date).arg(currentDt);
+    QString insert = QString("insert into %1 (name, gender, phone, birthday, logdate, current) "
+                             " values ('%2', '%3', '%4', '%5', '%6', '%7');"
+                             ).arg(tableName).arg(name).arg(gender).arg(phone).arg(birthday).arg(date).arg(currentDt);
     query.exec(insert);
     database.commit();
 
-    model->setSort(5,Qt::DescendingOrder);
-    model->select();
-    ui->tableView->reset();
 }
 
 void MainWindow::on_pushButtonOK_clicked()
 {
-    ui->tableViewChoose->show();
-    insertRec();
+    insertRec("sign");
+    if(candidate_cnt == 0) {
+        insertRec("sign_dict");
+    }
+
+    model->setSort(5,Qt::DescendingOrder);
+    model->select();
+    ui->tableView->reset();
+    candidate_cnt = 0;
+    ui->lineEditName->clear();
+    ui->lineEditPhone->clear();
+    ui->lineEditBirth->clear();
+    ui->lineEditName->setFocus();
+}
+
+int MainWindow::autoFill(QString name, QString phone)
+{
+    int cnt = 0;
+
+    if (name.isEmpty() && phone.isEmpty()) return 0;
+
+    if (!name.isEmpty()) {
+        cnt = candidate(QString("name = '%1'").arg(name));
+        if (cnt <= 0) return 0;
+    }
+
+    if (!phone.isEmpty()) {
+        cnt = candidate(QString("phone = '%1'").arg(phone));
+        if (cnt <= 0) return 0;
+    }
+    return cnt;
+}
+
+void MainWindow::on_lineEditName_editingFinished()
+{
+    qDebug() << "name finish";
+    candidate_cnt = autoFill(ui->lineEditName->text().trimmed(), "");
+}
+
+void MainWindow::on_lineEditName_returnPressed()
+{
+    qDebug() << "name return";
+    candidate_cnt = autoFill(ui->lineEditName->text().trimmed(), "");
+}
+
+void MainWindow::on_lineEditPhone_editingFinished()
+{
+    candidate_cnt = autoFill("", ui->lineEditPhone->text().trimmed());
+}
+
+void MainWindow::on_lineEditPhone_returnPressed()
+{
+    candidate_cnt = autoFill("", ui->lineEditPhone->text().trimmed());
 }

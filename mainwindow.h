@@ -26,15 +26,25 @@ public:
     QSqlDatabase database;
     QSqlTableModel *model;
     void setModel();
-    void insertRec();
-    void candidate();
+    void insertRec(QString tableName);
+    int candidate(QString filter);
     void setDatabase();
+    int autoFill(QString name, QString phone);
 
 private slots:
     void on_pushButtonOK_clicked();
 
+    void on_lineEditName_editingFinished();
+
+    void on_lineEditPhone_editingFinished();
+
+    void on_lineEditName_returnPressed();
+
+    void on_lineEditPhone_returnPressed();
+
 private:
     Ui::MainWindow *ui;
+    int candidate_cnt;
 };
 
 #endif // MAINWINDOW_H
