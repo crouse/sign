@@ -25,6 +25,7 @@ public:
     ~MainWindow();
     QSqlDatabase database;
     QSqlTableModel *model;
+    QSqlTableModel *candidateModel;
     void setModel();
     void insertRec(QString tableName);
     int candidate(QString filter);
@@ -42,6 +43,8 @@ private slots:
     void on_lineEditName_returnPressed();
 
     void on_lineEditPhone_returnPressed();
+
+    void on_tableViewChoose_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

@@ -75,7 +75,7 @@ void MainWindow::setModel()
 
 int MainWindow::candidate(QString filter)
 {
-    QSqlTableModel *candidateModel = new QSqlTableModel(this);
+    candidateModel = new QSqlTableModel(this);
     candidateModel->setTable("sign_dict");
     candidateModel->setHeaderData(0, Qt::Horizontal, "姓名");
     candidateModel->setHeaderData(1, Qt::Horizontal, "性别");
@@ -133,6 +133,7 @@ void MainWindow::insertRec(QString tableName)
 
 void MainWindow::on_pushButtonOK_clicked()
 {
+    if (!ui->tableViewChoose->isHidden()) ui->tableViewChoose->hide();
     QString name = ui->lineEditName->text().trimmed();
     QString phone = ui->lineEditPhone->text().trimmed();
     if (name.isEmpty()) return;
@@ -206,4 +207,25 @@ void MainWindow::on_lineEditPhone_editingFinished()
 void MainWindow::on_lineEditPhone_returnPressed()
 {
     autoFill(ui->lineEditName->text().trimmed(), ui->lineEditPhone->text().trimmed());
+}
+
+void MainWindow::on_tableViewChoose_doubleClicked(const QModelIndex &index)
+{
+    qDebug() << "hello world";
+    qDebug() << index.row();
+    QSqlRecord record = candidateModel->record(index.row());
+    QString name = record.value(0).toString();
+    QString gender = record.value(1).toString();
+    QString phone = record.value(2).toString();
+    QString birthday = record.value(3).toString();
+    QString currentDt = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+
+    ui->lineEditPhone->setText(phone);
+    ui->lineEditBirth->setText(birthday);
+    ui->comboBoxGender->setCurrentText(gender);
+    ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+
+    ui->tableViewChoose->hide();
+    ui->dateTimeEdit->setFocus();
+    delete candidateModel;
 }
