@@ -32,6 +32,7 @@ public:
     void setDatabase();
     int autoFill(QString name, QString phone);
     int queryCnt(QString sql);
+    int testIfAddedToday(QString name, QString phone, QString logdate);
 
 private slots:
     void on_pushButtonOK_clicked();

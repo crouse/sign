@@ -136,7 +136,16 @@ void MainWindow::on_pushButtonOK_clicked()
     if (!ui->tableViewChoose->isHidden()) ui->tableViewChoose->hide();
     QString name = ui->lineEditName->text().trimmed();
     QString phone = ui->lineEditPhone->text().trimmed();
+    QString logdate = ui->dateTimeEdit->date().toString("yyyy-MM-dd");
     if (name.isEmpty()) return;
+
+    int stat = testIfAddedToday(name, phone, logdate);
+    if (stat) {
+        QMessageBox msgBox;
+        msgBox.setText(QString("刚才已经录入啦，嘿嘿： %1 %2").arg(name, phone));
+        msgBox.exec();
+        return;
+    }
 
     insertRec("sign");
     model->setSort(5,Qt::DescendingOrder);
@@ -211,8 +220,6 @@ void MainWindow::on_lineEditPhone_returnPressed()
 
 void MainWindow::on_tableViewChoose_doubleClicked(const QModelIndex &index)
 {
-    qDebug() << "hello world";
-    qDebug() << index.row();
     QSqlRecord record = candidateModel->record(index.row());
     QString name = record.value(0).toString();
     QString gender = record.value(1).toString();
@@ -237,3 +244,25 @@ void MainWindow::on_actionUpdate_triggered()
     query.exec("insert into sign_dict (name, gender, phone, birthday, logdate, current) select name, gender, phone, birthday, logdate, current from sign group by name, phone");
     database.commit();
 }
+
+int MainWindow::testIfAddedToday(QString name, QString phone, QString logdate)
+{
+    int cnt = 0;
+    QSqlQuery query;
+    query.exec(QString("select * from sign where name = '%1' and phone = '%2' and logdate = '%3'").arg(name).arg(phone).arg(logdate));
+
+    while(query.next()) {
+        cnt++;
+    }
+
+    if (cnt) {
+        return true;
+    }
+
+    return false;
+}
+
+
+
+
+
