@@ -229,3 +229,11 @@ void MainWindow::on_tableViewChoose_doubleClicked(const QModelIndex &index)
     ui->dateTimeEdit->setFocus();
     delete candidateModel;
 }
+
+void MainWindow::on_actionUpdate_triggered()
+{
+    QSqlQuery query;
+    query.exec("delete from sign_dict");
+    query.exec("insert into sign_dict (name, gender, phone, birthday, logdate, current) select name, gender, phone, birthday, logdate, current from sign group by name, phone");
+    database.commit();
+}

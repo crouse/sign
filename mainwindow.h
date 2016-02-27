@@ -46,6 +46,8 @@ private slots:
 
     void on_tableViewChoose_doubleClicked(const QModelIndex &index);
 
+    void on_actionUpdate_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

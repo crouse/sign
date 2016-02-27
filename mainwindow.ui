@@ -228,7 +228,13 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionUpdate"/>
   </widget>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>更新字典表</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
