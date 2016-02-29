@@ -82,6 +82,9 @@
               <family>STFangsong</family>
              </font>
             </property>
+            <property name="editable">
+             <bool>true</bool>
+            </property>
             <item>
              <property name="text">
               <string>男</string>
@@ -229,10 +232,46 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionUpdate"/>
+   <addaction name="actionQuery"/>
+   <addaction name="actionQueryPeople"/>
+   <addaction name="actionQueryBirthday"/>
+   <addaction name="actionQueryPhone"/>
+   <addaction name="actionQueryAll"/>
+   <addaction name="actionClearEdits"/>
   </widget>
   <action name="actionUpdate">
    <property name="text">
     <string>更新字典表</string>
+   </property>
+  </action>
+  <action name="actionQuery">
+   <property name="text">
+    <string>按日期查询</string>
+   </property>
+  </action>
+  <action name="actionQueryPeople">
+   <property name="text">
+    <string>按姓名查询</string>
+   </property>
+  </action>
+  <action name="actionQueryPhone">
+   <property name="text">
+    <string>按手机号查询</string>
+   </property>
+  </action>
+  <action name="actionClearEdits">
+   <property name="text">
+    <string>清理输入框</string>
+   </property>
+  </action>
+  <action name="actionQueryBirthday">
+   <property name="text">
+    <string>按生日查询</string>
+   </property>
+  </action>
+  <action name="actionQueryAll">
+   <property name="text">
+    <string>遍历所有</string>
    </property>
   </action>
  </widget>

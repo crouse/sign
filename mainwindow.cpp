@@ -49,11 +49,11 @@ void MainWindow::setDatabase()
         query.exec(indexTableSql);
         qDebug() << createTableSql << indexTableSql;
         database.commit();
-        setModel();
+        setModel("");
     }
 }
 
-void MainWindow::setModel()
+void MainWindow::setModel(QString filter)
 {
     model = new QSqlTableModel(this);
     model->setTable("sign");
@@ -69,6 +69,8 @@ void MainWindow::setModel()
     ui->tableView->setModel(model);
     ui->tableView->alternatingRowColors();
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
+
+    model->setFilter(filter);
     model->select();
     ui->tableView->reset();
 }
@@ -133,6 +135,11 @@ void MainWindow::insertRec(QString tableName)
 
 void MainWindow::on_pushButtonOK_clicked()
 {
+    delete model;
+    QDate logdate_date = ui->dateTimeEdit->date();
+    QString date = logdate_date.toString("yyyy-MM-dd");
+    QString filter = QString("logdate = '%1'").arg(date);
+    setModel(filter);
     if (!ui->tableViewChoose->isHidden()) ui->tableViewChoose->hide();
     QString name = ui->lineEditName->text().trimmed();
     QString phone = ui->lineEditPhone->text().trimmed();
@@ -262,7 +269,59 @@ int MainWindow::testIfAddedToday(QString name, QString phone, QString logdate)
     return false;
 }
 
+void MainWindow::on_actionQuery_triggered()
+{
+    delete model;
 
+    QDate logdate = ui->dateTimeEdit->date();
+    QString date = logdate.toString("yyyy-MM-dd");
+    QString filter = QString("logdate = '%1'").arg(date);
 
+    setModel(filter);
+    clearEdits();
+}
 
+void MainWindow::on_actionQueryPeople_triggered()
+{
+    delete model;
+    QString filter = QString("name = '%1'").arg(ui->lineEditName->text().trimmed());
+    setModel(filter);
+    clearEdits();
+}
 
+void MainWindow::on_actionQueryPhone_triggered()
+{
+    delete model;
+    QString filter = QString("phone = '%1'").arg(ui->lineEditPhone->text().trimmed());
+    setModel(filter);
+    clearEdits();
+}
+
+void MainWindow::clearEdits()
+{
+    ui->lineEditName->clear();
+    ui->lineEditBirth->clear();
+    ui->lineEditPhone->clear();
+    ui->lineEditName->setFocus();
+}
+
+void MainWindow::on_actionClearEdits_triggered()
+{
+   clearEdits();
+}
+
+void MainWindow::on_actionQueryBirthday_triggered()
+{
+    delete model;
+    QString filter = QString("birthday like '\%%1\%'").arg(ui->lineEditBirth->text().trimmed());
+    setModel(filter);
+    clearEdits();
+}
+
+void MainWindow::on_actionQueryAll_triggered()
+{
+    delete model;
+    QString filter = QString("");
+    setModel(filter);
+    clearEdits();
+}

@@ -26,13 +26,14 @@ public:
     QSqlDatabase database;
     QSqlTableModel *model;
     QSqlTableModel *candidateModel;
-    void setModel();
+    void setModel(QString filter);
     void insertRec(QString tableName);
     int candidate(QString filter);
     void setDatabase();
     int autoFill(QString name, QString phone);
     int queryCnt(QString sql);
     int testIfAddedToday(QString name, QString phone, QString logdate);
+    void clearEdits();
 
 private slots:
     void on_pushButtonOK_clicked();
@@ -48,6 +49,18 @@ private slots:
     void on_tableViewChoose_doubleClicked(const QModelIndex &index);
 
     void on_actionUpdate_triggered();
+
+    void on_actionQuery_triggered();
+
+    void on_actionQueryPeople_triggered();
+
+    void on_actionQueryPhone_triggered();
+
+    void on_actionClearEdits_triggered();
+
+    void on_actionQueryBirthday_triggered();
+
+    void on_actionQueryAll_triggered();
 
 private:
     Ui::MainWindow *ui;
