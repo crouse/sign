@@ -26,7 +26,11 @@ public:
     QSqlDatabase database;
     QSqlTableModel *model;
     QSqlTableModel *candidateModel;
+    QSqlTableModel *qmodel;
+    QSqlTableModel *listModel;
+    void setQModel(QString filter);
     void setModel(QString filter);
+    void setListModel(QString filter);
     void insertRec(QString tableName);
     int candidate(QString filter);
     void setDatabase();
@@ -61,6 +65,16 @@ private slots:
     void on_actionQueryBirthday_triggered();
 
     void on_actionQueryAll_triggered();
+
+    void on_tabWidget_tabBarClicked(int index);
+
+    void on_dateEdit_editingFinished();
+
+    void on_pushButtonQquery_clicked();
+
+    void on_tableViewQ_doubleClicked(const QModelIndex &index);
+
+    void on_tableViewQ_clicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

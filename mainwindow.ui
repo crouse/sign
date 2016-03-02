@@ -27,7 +27,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="documentMode">
        <bool>true</bool>
@@ -220,6 +220,131 @@
         <string>统计信息</string>
        </attribute>
       </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>小组发言记录</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="labelBook">
+            <property name="text">
+             <string>教材：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditBook"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelTheme">
+            <property name="text">
+             <string>主题：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditTheme"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelPageNum">
+            <property name="text">
+             <string>页码：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditPageNum"/>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="dateEdit">
+            <property name="displayFormat">
+             <string>yyyy-MM-dd</string>
+            </property>
+            <property name="calendarPopup">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonQquery">
+            <property name="text">
+             <string>日期查询</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonMsave">
+            <property name="text">
+             <string>保存</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableView" name="tableViewQ">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableView" name="tableViewListNotes"/>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>378</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>姓名：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditQname"/>
+          </item>
+          <item>
+           <widget class="QDateTimeEdit" name="dateTimeEdit_2">
+            <property name="displayFormat">
+             <string>yyyy-MM-dd HH:mm:ss</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonQSave">
+            <property name="text">
+             <string>保存</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -247,6 +372,9 @@
   <action name="actionQuery">
    <property name="text">
     <string>按日期查询</string>
+   </property>
+   <property name="font">
+    <font/>
    </property>
   </action>
   <action name="actionQueryPeople">
@@ -285,7 +413,6 @@
   <tabstop>pushButtonOK</tabstop>
   <tabstop>tableViewChoose</tabstop>
   <tabstop>tableView</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableViewChoose->hide();
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     setDatabase();
+    ui->dateEdit->setDate(QDate::currentDate());
 }
 
 MainWindow::~MainWindow()
@@ -45,11 +46,18 @@ void MainWindow::setDatabase()
                                         " logdate datetime,"
                                         " current datetime"
                                         " );");
+
+        QString notesSql = QString("Create table notes (name varchar(32), phone varchar(32), logtime datetime, note text)");
         query.exec(createTableSql);
         query.exec(indexTableSql);
+        query.exec(notesSql);
         qDebug() << createTableSql << indexTableSql;
         database.commit();
         setModel("");
+        QString logdate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
+        QString filter = QString("logdate = '%1'").arg(logdate);
+        setQModel(filter);
+        setListModel(filter);
     }
 }
 
@@ -74,6 +82,50 @@ void MainWindow::setModel(QString filter)
     model->select();
     ui->tableView->reset();
 }
+
+void MainWindow::setListModel(QString filter)
+{
+   listModel = new QSqlTableModel(this);
+   listModel->setTable("notes");
+   listModel->setEditStrategy(QSqlTableModel::OnFieldChange);
+   listModel->setSort(0, Qt::AscendingOrder);
+   listModel->setHeaderData(0, Qt::Horizontal, "姓名");
+   listModel->setHeaderData(1, Qt::Horizontal, "手机");
+   listModel->setHeaderData(2, Qt::Horizontal, "记录时间");
+   listModel->setHeaderData(3, Qt::Horizontal, "发言记录");
+
+    ui->tableViewListNotes->setModel(listModel);
+    ui->tableViewListNotes->alternatingRowColors();
+    ui->tableViewListNotes->horizontalHeader()->setStretchLastSection(true);
+
+    listModel->setFilter(filter);
+    listModel->select();
+    ui->tableViewListNotes->reset();
+}
+
+
+void MainWindow::setQModel(QString filter)
+{
+    qmodel = new QSqlTableModel(this);
+    qmodel->setTable("sign");
+    qmodel->setEditStrategy(QSqlTableModel::OnFieldChange);
+    qmodel->setSort(0, Qt::AscendingOrder);
+    qmodel->setHeaderData(0, Qt::Horizontal, "姓名");
+    qmodel->setHeaderData(1, Qt::Horizontal, "性别");
+    qmodel->setHeaderData(2, Qt::Horizontal, "手机");
+    qmodel->setHeaderData(3, Qt::Horizontal, "生日");
+    qmodel->setHeaderData(4, Qt::Horizontal, "日期");
+    qmodel->setHeaderData(5, Qt::Horizontal, "记录时间");
+
+    ui->tableViewQ->setModel(qmodel);
+    ui->tableViewQ->alternatingRowColors();
+    ui->tableViewQ->horizontalHeader()->setStretchLastSection(true);
+
+    qmodel->setFilter(filter);
+    qmodel->select();
+    ui->tableViewQ->reset();
+}
+
 
 int MainWindow::candidate(QString filter)
 {
@@ -324,4 +376,40 @@ void MainWindow::on_actionQueryAll_triggered()
     QString filter = QString("");
     setModel(filter);
     clearEdits();
+}
+
+void MainWindow::on_tabWidget_tabBarClicked(int index)
+{
+    qDebug() << "clicked" << index;
+    if (index == 0) ui->mainToolBar->show();
+    if (index == 2 || index == 1) {
+        ui->mainToolBar->hide();
+    }
+}
+
+void MainWindow::on_dateEdit_editingFinished()
+{
+    QString qdate = ui->dateEdit->date().toString("yyyy-MM-dd");
+    QString filter = QString("logdate = '%1'").arg(qdate);
+    delete qmodel;
+    setQModel(filter);
+}
+
+void MainWindow::on_pushButtonQquery_clicked()
+{
+    QString qdate = ui->dateEdit->date().toString("yyyy-MM-dd");
+    QString filter = QString("logdate = '%1'").arg(qdate);
+    delete qmodel;
+    setQModel(filter);
+}
+
+void MainWindow::on_tableViewQ_doubleClicked(const QModelIndex &index)
+{
+    ui->textEdit->setFocus();
+    qDebug() << "double clicked" << index;
+}
+
+void MainWindow::on_tableViewQ_clicked(const QModelIndex &index)
+{
+    qDebug() << "single clicked" << index;
 }
