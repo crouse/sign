@@ -428,9 +428,9 @@ void MainWindow::on_pushButtonQSave_clicked()
     QString name = ui->lineEditQname->text();
     QString phone = ui->lineEditQPhone->text();
     QString text = ui->plainTextEdit->toPlainText();
-    QString logtime = ui->dateTimeEditQ->dateTime().toString("yyyy-MM-dd hh:mm:ss");
+    ui->dateTimeEditQ->setDateTime(QDateTime::currentDateTime());
+    QString logtime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     QString logdate = ui->dateTimeEditQ->dateTime().toString("yyyy-MM-dd");
-    QString tomorrow = ui->dateTimeEditQ->dateTime().addDays(1).toString("yyyy-MM-dd");
 
     qDebug() << "on_pushButtonQSave_clicked" << name << phone << text << logtime;
     QString sql = QString("insert into notes (name, phone, logtime, note) values ('%1', '%2', '%3', '%4')").arg(name).arg(phone).arg(logtime).arg(text);
