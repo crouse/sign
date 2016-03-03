@@ -440,4 +440,6 @@ void MainWindow::on_pushButtonQSave_clicked()
     QString filter = QString("logtime > '%1'").arg(logdate);
     delete listModel;
     setListModel(filter);
+
+    ui->plainTextEdit->clear();
 }
