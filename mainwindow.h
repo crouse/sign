@@ -76,6 +76,8 @@ private slots:
 
     void on_tableViewQ_clicked(const QModelIndex &index);
 
+    void on_pushButtonQSave_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

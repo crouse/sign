@@ -57,7 +57,7 @@ void MainWindow::setDatabase()
         QString logdate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
         QString filter = QString("logdate = '%1'").arg(logdate);
         setQModel(filter);
-        setListModel(filter);
+        setListModel("");
     }
 }
 
@@ -405,11 +405,39 @@ void MainWindow::on_pushButtonQquery_clicked()
 
 void MainWindow::on_tableViewQ_doubleClicked(const QModelIndex &index)
 {
-    ui->textEdit->setFocus();
-    qDebug() << "double clicked" << index;
+    ui->plainTextEdit->setFocus();
+    qDebug() << "double clicked" << index.row();
+    int rowNum = index.row();
+    //QRecord record = qmodel->record(rowNum).value("name").toString();
+    QSqlRecord record = qmodel->record(rowNum);
+    QString name = record.value("name").toString();
+    QString phone = record.value("phone").toString();
+    qDebug() << name << phone;
+    ui->lineEditQname->setText(name);
+    ui->lineEditQPhone->setText(phone);
+    ui->dateTimeEditQ->setDateTime(QDateTime::currentDateTime());
 }
 
 void MainWindow::on_tableViewQ_clicked(const QModelIndex &index)
 {
     qDebug() << "single clicked" << index;
+}
+
+void MainWindow::on_pushButtonQSave_clicked()
+{
+    QString name = ui->lineEditQname->text();
+    QString phone = ui->lineEditQPhone->text();
+    QString text = ui->plainTextEdit->toPlainText();
+    QString logtime = ui->dateTimeEditQ->dateTime().toString("yyyy-MM-dd hh:mm:ss");
+    QString logdate = ui->dateTimeEditQ->dateTime().toString("yyyy-MM-dd");
+    QString tomorrow = ui->dateTimeEditQ->dateTime().addDays(1).toString("yyyy-MM-dd");
+
+    qDebug() << "on_pushButtonQSave_clicked" << name << phone << text << logtime;
+    QString sql = QString("insert into notes (name, phone, logtime, note) values ('%1', '%2', '%3', '%4')").arg(name).arg(phone).arg(logtime).arg(text);
+    QSqlQuery query;
+    query.exec(sql);
+    database.commit();
+    QString filter = QString("logtime > '%1'").arg(logdate);
+    delete listModel;
+    setListModel(filter);
 }

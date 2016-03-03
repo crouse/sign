@@ -300,7 +300,7 @@
          <widget class="QTableView" name="tableViewListNotes"/>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEdit"/>
+         <widget class="QPlainTextEdit" name="plainTextEdit"/>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -311,7 +311,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>378</width>
+              <width>40</width>
               <height>20</height>
              </size>
             </property>
@@ -325,10 +325,31 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEditQname"/>
+           <widget class="QLineEdit" name="lineEditQname">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="QDateTimeEdit" name="dateTimeEdit_2">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>手机号：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditQPhone">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateTimeEdit" name="dateTimeEditQ">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="displayFormat">
              <string>yyyy-MM-dd HH:mm:ss</string>
             </property>
