@@ -88,7 +88,7 @@ void MainWindow::setListModel(QString filter)
    listModel = new QSqlTableModel(this);
    listModel->setTable("notes");
    listModel->setEditStrategy(QSqlTableModel::OnFieldChange);
-   listModel->setSort(0, Qt::AscendingOrder);
+   listModel->setSort(2, Qt::AscendingOrder);
    listModel->setHeaderData(0, Qt::Horizontal, "姓名");
    listModel->setHeaderData(1, Qt::Horizontal, "手机");
    listModel->setHeaderData(2, Qt::Horizontal, "记录时间");
